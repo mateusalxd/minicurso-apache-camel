@@ -1,0 +1,9 @@
+
+
+
+- route:
+    id: rota-yaml
+    from:
+      uri: "timer:exibirDataHora?period=5000"
+      steps:
+        - log: "Data e hora: ${date:now:dd/MM/YYYY HH:mm:ss}"

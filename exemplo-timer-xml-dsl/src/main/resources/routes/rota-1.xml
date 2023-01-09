@@ -1,0 +1,4 @@
+<route id="rota-xml">
+    <from uri="timer:exibirDataHora?period=5000"/>
+    <log message="Data e hora: ${date:now:dd/MM/YYYY HH:mm:ss}"/>
+</route>
