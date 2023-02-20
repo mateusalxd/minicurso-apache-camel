@@ -1,7 +1,6 @@
 package com.github.mateusalxd.minicursoapachecamel.integracaoarquivo;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.support.builder.Namespaces;
 
 public class IntegracaoArquivo extends RouteBuilder {
@@ -15,18 +14,9 @@ public class IntegracaoArquivo extends RouteBuilder {
                 .log("Processando o arquivo: ${file:name}")
                 .setProperty("CNPJ", xpath("{{xpathCnpjTransportadora}}", ns))
                 .choice()
-                .when(exchangeProperty("CNPJ").isEqualTo("1"))
-                .to("file:{{diretorioTransportadora1}}?fileName=${date:now:HHmmss}_${file:name}")
-                .when(exchangeProperty("CNPJ").isEqualTo("2"))
-                    .throttle(1).timePeriodMillis(5000).asyncDelayed()
-                        .setHeader(HttpConstants.HTTP_METHOD, constant("POST"))
-                        .setHeader(HttpConstants.HTTP_URI, constant("{{urlApiTransportadora2}}"))
-                        .setHeader(HttpConstants.HTTP_PATH, constant("nfes"))
-                        .setHeader(HttpConstants.CONTENT_TYPE).constant("application/xml")
-                        .to("http:servidorTransportadora2")
-                        .endChoice()
-                .otherwise()
-                .log("Transportadora não integrada")
+                .when(exchangeProperty("CNPJ").isEqualTo("1")).to("direct:integracaoTransportadora1")
+                .when(exchangeProperty("CNPJ").isEqualTo("2")).to("direct:integracaoTransportadora2")
+                .otherwise().log("Transportadora não integrada")
                 .end();
     }
 }
